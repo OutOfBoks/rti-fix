@@ -2,3 +2,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.print-only-text {
+  display: none;
+}
+
+@media print {  
+  .no-print-area {
+    display: none !important;
+  }
+  
+  .print-only-text {
+    display: block !important;
+    white-space: pre-wrap; 
+    word-break: break-word;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #000;
+  }
+}

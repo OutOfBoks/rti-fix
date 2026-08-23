@@ -1,14 +1,98 @@
 [
   {
-    "id": "dept_1",
-    "ministry": "Ministry of Railways",
-    "authority": "Railway Board / IRCTC",
-    "keywords": ["train", "pnr", "refund", "station", "tatkal"]
+    "id": "pwd-infra",
+    "departmentName": "Public Works Department (PWD) / Road Transport",
+    "category": "Roads & Infrastructure",
+    "defaultPio": "Public Information Officer, Office of the Executive Engineer, PWD",
+    "feeRules": {
+      "standardFee": "₹10 (Postal Order / Demand Draft / Cash)",
+      "bplFee": "₹0 (Exempted under Section 7(5) - Attach Copy of BPL/AAY Card)",
+      "acceptablePaymentModes": ["IPO", "DD", "Court Fee Stamp", "Cash"]
+    },
+    "sampleQuestions": [
+      "Provide certified copies of the sanctioned budget, work order, and completion certificate for road construction/repair in [Location/Area] during [Year/Period].",
+      "Provide details of the contractor/agency assigned for this project along with the agreed warranty/defect liability period.",
+      "Provide copies of the quality testing reports conducted on the materials used for the road construction."
+    ]
   },
   {
-    "id": "dept_2",
-    "ministry": "Ministry of Road Transport & Highways",
-    "authority": "National Highways Authority of India (NHAI)",
-    "keywords": ["road", "highway", "toll", "challan", "pothole"]
+    "id": "pds-ration",
+    "departmentName": "Department of Food, Civil Supplies & Consumer Affairs",
+    "category": "Ration & PDS",
+    "defaultPio": "Public Information Officer, Office of the Assistant Commissioner / Food Supply Officer",
+    "feeRules": {
+      "standardFee": "₹10 (Postal Order / Demand Draft / Cash)",
+      "bplFee": "₹0 (Exempted under Section 7(5) - Attach Copy of BPL/AAY Card)",
+      "acceptablePaymentModes": ["IPO", "DD", "Court Fee Stamp", "Cash"]
+    },
+    "sampleQuestions": [
+      "Provide the monthly stock entry register and distribution details for Fair Price Shop (FPS) No. [FPS Number/Area] for the last 6 months.",
+      "Provide the status and reason for delay regarding my ration card application/transfer reference number [App Number].",
+      "Provide the official list of registered BPL/AAY cardholders linked to FPS No. [FPS Number]."
+    ]
+  },
+  {
+    "id": "education-exam",
+    "departmentName": "Board of Secondary Education / University Registrar",
+    "category": "Exams & Education",
+    "defaultPio": "Public Information Officer / Controller of Examinations",
+    "feeRules": {
+      "standardFee": "₹10 (Postal Order / Demand Draft / Cash)",
+      "bplFee": "₹0 (Exempted under Section 7(5) - Attach Copy of BPL/AAY Card)",
+      "acceptablePaymentModes": ["IPO", "DD", "Court Fee Stamp", "Cash"]
+    },
+    "sampleQuestions": [
+      "Provide certified copies of the evaluated answer sheet for Roll No. [Roll No] for [Exam Name / Subject Code].",
+      "Provide the official answer key and cutoff mark details for [Exam Name] held on [Date].",
+      "Provide the status and daily progress report of my re-evaluation application reference number [App Number]."
+    ]
+  },
+  {
+    "id": "revenue-land",
+    "departmentName": "Revenue Department / Revenue Divisional Office (RDO)",
+    "category": "Land Records & Revenue",
+    "defaultPio": "Public Information Officer, Office of the Tehsildar / RDO",
+    "feeRules": {
+      "standardFee": "₹10 (Postal Order / Demand Draft / Cash)",
+      "bplFee": "₹0 (Exempted under Section 7(5) - Attach Copy of BPL/AAY Card)",
+      "acceptablePaymentModes": ["IPO", "DD", "Court Fee Stamp", "Cash"]
+    },
+    "sampleQuestions": [
+      "Provide certified copies of the Mutation/Khata transfer order and field survey map for Survey No. [Survey No] in [Village/Area].",
+      "Provide the current status and daily progress report on my land measurement/demarcation application dated [Date].",
+      "Provide the list of designated government land/encroachments recorded under Survey No. [Survey No]."
+    ]
+  },
+  {
+    "id": "municipal-water",
+    "departmentName": "Municipal Corporation / City Water Supply Board",
+    "category": "Municipal & Water Supply",
+    "defaultPio": "Public Information Officer, Office of the Municipal Commissioner / Executive Engineer (Water)",
+    "feeRules": {
+      "standardFee": "₹10 (Postal Order / Demand Draft / Cash)",
+      "bplFee": "₹0 (Exempted under Section 7(5) - Attach Copy of BPL/AAY Card)",
+      "acceptablePaymentModes": ["IPO", "DD", "Court Fee Stamp", "Cash"]
+    },
+    "sampleQuestions": [
+      "Provide information on the action taken on my complaint dated [Date] regarding water pipeline leakage/sewage backup in [Locality].",
+      "Provide certified copies of the sanctioned plan and building permission for property reference [Property ID/Address].",
+      "Provide details of property tax collection and pending dues list for Ward No. [Ward Number]."
+    ]
+  },
+  {
+    "id": "police-status",
+    "departmentName": "District Police Headquarters / Police Commissionerate",
+    "category": "Police & Public Safety",
+    "defaultPio": "Public Information Officer, Office of the Superintendent of Police (SP) / DSP",
+    "feeRules": {
+      "standardFee": "₹10 (Postal Order / Demand Draft / Cash)",
+      "bplFee": "₹0 (Exempted under Section 7(5) - Attach Copy of BPL/AAY Card)",
+      "acceptablePaymentModes": ["IPO", "DD", "Court Fee Stamp", "Cash"]
+    },
+    "sampleQuestions": [
+      "Provide the current status and daily progress report of FIR / Complaint No. [FIR Number] registered on [Date] at [Police Station Name].",
+      "Provide certified copies of the Station House Diary (GD Entry) related to Complaint No. [Complaint No].",
+      "Provide the names and designations of the Investigating Officers assigned to Complaint No. [Complaint No] since filing."
+    ]
   }
 ]

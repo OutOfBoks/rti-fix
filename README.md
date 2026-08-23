@@ -1,16 +1,20 @@
-# React + Vite
+# RTI-Fix 🏛️
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An AI-powered tool that automatically drafts legally precise RTI (Right to Information) applications and identifies the correct Public Authority/Ministry under the Indian RTI Act, 2005.
 
-Currently, two official plugins are available:
+## Features
+- **Smart Department Matching**: Matches user queries to the right Public Authority.
+- **BPL Fee Exemption Support**: Auto-includes Section 7(5) legal clause if BPL is selected.
+- **Print & PDF Support**: Generates clean, print-ready legal document drafts.
+- **Multilingual Support**: Accepts Hindi, English, and Hinglish inputs.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
+- **Frontend**: React (Vite), Tailwind CSS
+- **AI**: Gemini API (`@google/genai`)
+- **Hosting**: Vercel
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Local Setup
+1. Clone repository: `git clone <repo-url>`
+2. Install dependencies: `npm install`
+3. Add `.env` file: `VITE_GEMINI_API_KEY=your_key_here`
+4. Run project: `yarn dev`
