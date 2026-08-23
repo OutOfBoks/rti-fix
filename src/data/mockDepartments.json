@@ -1,0 +1,14 @@
+[
+  {
+    "id": "dept_1",
+    "ministry": "Ministry of Railways",
+    "authority": "Railway Board / IRCTC",
+    "keywords": ["train", "pnr", "refund", "station", "tatkal"]
+  },
+  {
+    "id": "dept_2",
+    "ministry": "Ministry of Road Transport & Highways",
+    "authority": "National Highways Authority of India (NHAI)",
+    "keywords": ["road", "highway", "toll", "challan", "pothole"]
+  }
+]
