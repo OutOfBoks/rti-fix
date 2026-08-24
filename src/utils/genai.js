@@ -1,69 +1,64 @@
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from "@google/genai";
 
 const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
-export const draftRTIRequest = async ({ userProblem, departmentsList, isBpl }) => {  
-  console.log("RECEIVED IS_BPL VALUE IN API:", isBpl); // Debugging line
-const feeLine = isBpl
-    ? "APPLICANT IS FROM BPL CATEGORY. FEE IS EXEMPTED UNDER SECTION 7(5) OF RTI ACT 2005. COPY OF BPL CARD ATTACHED."
-    : "APPLICATION FEE OF RS. 10/- IS ATTACHED HEREWITH VIA IPO / COURT FEE STAMP / DD.";
+export const draftRTIRequest = async ({ userProblem, departmentsList }) => {
+  /* const systemInstruction = `
+You are an expert Indian RTI Draft Writer. Follow these STRICT formatting rules:
+1. CHAR LIMIT: The generated RTI application text MUST be strictly UNDER 2800 characters (to safely fit within the official portal's 3000 character limit).
+2. ALLOWED CHARACTERS ONLY: Use ONLY standard alphabets (A-Z, a-z), numbers (0-9), and these allowed special characters: . - _ ( ) / @ : & ? %
+3. DO NOT use any unallowed symbols, emojis, bullet points like '•' or special quotes.`;
 
-  const prompt = `
-    User Problem: "${userProblem}"
-    Is BPL Applicant: ${isBpl ? "YES" : "NO"}
-    Available Departments JSON: ${JSON.stringify(departmentsList)}
+  const userPrompt = `
+User Problem Description: ${userProblem}
+Available Departments: ${JSON.stringify(departmentsList)}
 
-    Task:
-    1. Match problem with the most relevant Ministry & Public Authority from JSON.
-    2. Convert problem into a highly professional, legal RTI application following standard Indian RTI Format.
+Based on this, generate:
+1. Selected Department Name
+2. Precise RTI Application Text
+`; */
+  const systemInstruction = `
+You are an expert Indian RTI Application Writer. Return a JSON object with strictly these 3 keys:
+1. "selectedMinistry"
+2. "selectedAuthority"
+3. "draftedText"
 
-    DRAFTED TEXT TEMPLATE STRUCTURE:
-    FORMAT FOR APPLICATION UNDER RTI ACT 2005
+STRICT RULES FOR "draftedText":
+- CHAR LIMIT: MUST be strictly under 2800 characters (max limit of official RTI portal is 3000).
+- ALLOWED CHARS ONLY: Use ONLY alphabets (A-Z, a-z), numbers (0-9), and these allowed special characters: . - _ ( ) / @ : & ? %
+- NO UNALLOWED CHARS: Do NOT use bullet points (•), asterisks (*), hash (#), emojis, or complex quotes.
+`;
 
-    To,
-    The Public Information Officer (PIO),
-    [Public Authority Name],
-    [Department / Ministry Name],
-    [State / District Office Address]
+  const userPrompt = `
+User Problem Description: ${userProblem}
+Available Departments List: ${JSON.stringify(departmentsList)}
 
-    1. Full Name of Applicant: [Insert Name]
-    2. Complete Postal Address: [Insert Address, State, PIN]
-    3. Contact Details: [Insert Mobile No / Email]
+Instructions:
+1. Select the most appropriate Ministry and Public Authority.
+2. Generate ONLY the Subject Line and the specific numbered points/questions asking for information.
+3. DO NOT include salutations (like "To PIO", "Sir/Madam"), fee details, or applicant address placeholders.
+`;
 
-    SUBJECT: Application under Section 6(1) of the Right to Information Act, 2005 regarding [Short Subject Title].
+  const prompt = `${systemInstruction}\n\n${userPrompt}`;
 
-    PARTICULARS OF INFORMATION REQUIRED:
-    1. [Specific, numbered legal query requesting certified copies, inspection, or progress report]
-    2. [Second specific query]
-    3. [Third specific query regarding timeline or official responsible]
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3.6-flash",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+      },
+    });
 
-    APPLICATION FEE DETAILS:
-    ${feeLine}
+    const rawText = response.text || "Anda le";
+    const cleanedText = rawText
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
 
-    DECLARATION & CLAUSES:
-    - I am a Citizen of India.
-    - If information falls under another authority, kindly transfer under Section 6(3) within 5 days.
-    - Information requested is within 30 days limit under Section 7(1).
-
-    Place: [Insert Place]
-    Date: [Insert Date]
-    Signature of Applicant: _____________
-
-    Return ONLY raw JSON in this exact structure:
-    {
-      "selectedMinistry": "Ministry Name",
-      "selectedAuthority": "Public Authority Name",
-      "draftedText": "Full formatted RTI draft following above structure"
-    }
-  `;
-
-  const response = await ai.models.generateContent({
-    model: 'gemini-3.6-flash',
-    contents: prompt,
-    config: {
-      responseMimeType: "application/json",
-    }
-  });
-
-  return JSON.parse(response.text);
+    return JSON.parse(cleanedText);
+  } catch (error) {
+    console.error("API Error:", error);
+    throw error;
+  }
 };

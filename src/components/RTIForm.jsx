@@ -8,7 +8,6 @@ export default function RTIForm() {
   const [selectedMinistry, setSelectedMinistry] = useState("");
   const [selectedAuthority, setSelectedAuthority] = useState("");
   const [draftedText, setDraftedText] = useState("");
-  const [isBpl, setIsBpl] = useState(false);
 
   const handleAutoFill = async (e) => {
     e.preventDefault();
@@ -16,9 +15,10 @@ export default function RTIForm() {
 
     setLoading(true);
     try {
-      const result = await draftRTIRequest({userProblem: problem,
-      departmentsList: mockDepartments,
-      isBpl: isBpl});
+      const result = await draftRTIRequest({
+        userProblem: problem,
+        departmentsList: mockDepartments,
+      });
       setSelectedMinistry(result.selectedMinistry || "");
       setSelectedAuthority(result.selectedAuthority || "");
       setDraftedText(result.draftedText || "");
@@ -49,22 +49,6 @@ export default function RTIForm() {
             onChange={(e) => setProblem(e.target.value)}
           />
         </div>
-      {/* BPL Category Checkbox */}
-          <div className="flex items-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-md">
-            <input
-              type="checkbox"
-              id="bplCheckbox"
-              checked={isBpl}
-              onChange={(e) => {setIsBpl(e.target.checked); console.log("CHECKBOX TOGGLED TO:", e.target.checked);}}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
-            />
-            <label
-              htmlFor="bplCheckbox"
-              className="text-sm font-medium text-gray-700 cursor-pointer"
-            >
-              Applicant belongs to BPL Category (Fee Exempted under Sec 7(5))
-            </label>
-          </div>
         <button
           type="submit"
           disabled={loading}
@@ -105,12 +89,14 @@ export default function RTIForm() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 print:hidden">
-              Generated Legal RTI Text
+              <span>Generated Legal RTI Text </span>
+              <span>{draftedText.length}/3000 Chars</span>
             </label>
 
             <textarea
-              rows="6"
+              rows="12"
               value={draftedText}
+              maxLength={3000}
               onChange={(e) => setDraftedText(e.target.value)}
               className="w-full p-3 bg-white border border-gray-300 rounded-md font-mono text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 print:hidden"
             />
@@ -118,26 +104,67 @@ export default function RTIForm() {
             <div className="hidden print:block whitespace-pre-wrap font-mono text-sm text-gray-900 leading-relaxed p-1">
               {draftedText}
             </div>
-          </div>          
+          </div>
           {/* Buttons: Copy & PDF */}
-          <div className="flex gap-3 pt-2">
+
+          {/* Buttons Container: Equal Size & Uniform Height */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+            {/* 1. Copy Button */}
             <button
               type="button"
               onClick={() => {
                 navigator.clipboard.writeText(draftedText);
                 alert("RTI Draft Copied!");
               }}
-              className="bg-gray-800 text-white px-4 py-2 rounded-md font-medium hover:bg-gray-900 transition"
+              className="flex-1 w-full py-2.5 px-4 text-xs font-semibold bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition flex items-center justify-center gap-2 cursor-pointer"
             >
-              📋 Copy Text
+              <span>📋 Copy Text</span>
             </button>
+
+            {/* 2. PDF / Print Draft Button */}
             <button
               type="button"
               onClick={() => window.print()}
-              className="bg-green-600 text-white px-4 py-2 rounded-md font-medium hover:bg-green-700 transition"
+              className="flex-1 w-full py-2.5 px-4 text-xs font-semibold text-gray-800 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
-              🖨️ Save as PDF / Print
+              <svg
+                className="w-4 h-4 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                />
+              </svg>
+              Download PDF / Print
             </button>
+
+            {/* 3. Direct RTI Online Portal Button */}
+            <a
+              href="https://rtionline.gov.in"
+              target="_blank"
+              rel="noreferrer"
+              className="flex-1 w-full py-2.5 px-4 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center gap-2 transition-all text-center"
+            >
+              <span>Open RTI Portal</span>
+              <svg
+                className="w-4 h-4 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
+              </svg>
+            </a>
           </div>
         </div>
       )}
