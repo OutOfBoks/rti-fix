@@ -3,20 +3,6 @@ import { GoogleGenAI } from "@google/genai";
 const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
 export const draftRTIRequest = async ({ userProblem, departmentsList }) => {
-  /* const systemInstruction = `
-You are an expert Indian RTI Draft Writer. Follow these STRICT formatting rules:
-1. CHAR LIMIT: The generated RTI application text MUST be strictly UNDER 2800 characters (to safely fit within the official portal's 3000 character limit).
-2. ALLOWED CHARACTERS ONLY: Use ONLY standard alphabets (A-Z, a-z), numbers (0-9), and these allowed special characters: . - _ ( ) / @ : & ? %
-3. DO NOT use any unallowed symbols, emojis, bullet points like '•' or special quotes.`;
-
-  const userPrompt = `
-User Problem Description: ${userProblem}
-Available Departments: ${JSON.stringify(departmentsList)}
-
-Based on this, generate:
-1. Selected Department Name
-2. Precise RTI Application Text
-`; */
   const systemInstruction = `
 You are an expert Indian RTI Application Writer. Return a JSON object with strictly these 3 keys:
 1. "selectedMinistry"
