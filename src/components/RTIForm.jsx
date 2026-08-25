@@ -12,6 +12,42 @@ export default function RTIForm() {
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
 
+  // const handleAutoFill = async (e) => {
+  //   e.preventDefault();
+  //   if (!problem.trim()) {
+  //     setError("Please describe your problem or query first.");
+  //     return;
+  //   }
+  //   setError("");
+  //   setSelectedMinistry("");
+  // setSelectedAuthority("");
+  // setDraftedText("");
+  //   setLoading(true);
+
+  //   try {
+  //     const result = await draftRTIRequest({
+  //       userProblem: problem,
+  //       departmentsList: mockDepartments,
+  //     });
+
+  //     // Fix: QA 2 (Safe parsing checks)
+  //     const safeMinistry = typeof result?.selectedMinistry === "string" ? result.selectedMinistry : "";
+  //     const safeAuthority = typeof result?.selectedAuthority === "string" ? result.selectedAuthority : "";
+  //     const safeDraft = typeof result?.draftedText === "string" 
+  //       ? result.draftedText.slice(0, 3000) 
+  //       : "Error drafting RTI application text. Please try again.";
+
+  //     setSelectedMinistry(safeMinistry);
+  //     setSelectedAuthority(safeAuthority);
+  //     setDraftedText(safeDraft);
+  //   } catch (err) {
+  //     console.error(err);
+  //     setError("Error processing request. Check console/API key.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleAutoFill = async (e) => {
     e.preventDefault();
     if (!problem.trim()) {
@@ -19,6 +55,9 @@ export default function RTIForm() {
       return;
     }
     setError("");
+    setSelectedMinistry("");
+    setSelectedAuthority("");
+    setDraftedText("");
     setLoading(true);
 
     try {
@@ -27,24 +66,26 @@ export default function RTIForm() {
         departmentsList: mockDepartments,
       });
 
-      // Fix: QA 2 (Safe parsing checks)
+      // Fix: QA 9 (Validate full schema - do not put error strings inside draftedText)
+      if (!result || typeof result.draftedText !== "string" || !result.draftedText.trim()) {
+        throw new Error("Unable to generate a valid RTI draft. Please try again.");
+      }
+
       const safeMinistry = typeof result?.selectedMinistry === "string" ? result.selectedMinistry : "";
       const safeAuthority = typeof result?.selectedAuthority === "string" ? result.selectedAuthority : "";
-      const safeDraft = typeof result?.draftedText === "string" 
-        ? result.draftedText.slice(0, 3000) 
-        : "Error drafting RTI application text. Please try again.";
+      const safeDraft = result.draftedText.slice(0, 3000);
 
       setSelectedMinistry(safeMinistry);
       setSelectedAuthority(safeAuthority);
       setDraftedText(safeDraft);
     } catch (err) {
       console.error(err);
-      setError("Error processing request. Check console/API key.");
+      // Fix: QA 10 (User-friendly error message instead of developer guidance)
+      setError("Failed to generate RTI draft. Please try again or check your network.");
     } finally {
       setLoading(false);
     }
   };
-
   // Fix: QA 5 (Async/await clipboard handling with error fallback)
   const handleCopy = async () => {
     if (!draftedText) return;
