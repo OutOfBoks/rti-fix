@@ -8,25 +8,52 @@ export default function RTIForm() {
   const [selectedMinistry, setSelectedMinistry] = useState("");
   const [selectedAuthority, setSelectedAuthority] = useState("");
   const [draftedText, setDraftedText] = useState("");
+  // Fix: QA 5 & 6 (Error feedback state & async copy state)
+  const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const handleAutoFill = async (e) => {
     e.preventDefault();
-    if (!problem.trim()) return;
-
+    if (!problem.trim()) {
+      setError("Please describe your problem or query first.");
+      return;
+    }
+    setError("");
     setLoading(true);
+
     try {
       const result = await draftRTIRequest({
         userProblem: problem,
         departmentsList: mockDepartments,
       });
-      setSelectedMinistry(result.selectedMinistry || "");
-      setSelectedAuthority(result.selectedAuthority || "");
-      setDraftedText(result.draftedText || "");
+
+      // Fix: QA 2 (Safe parsing checks)
+      const safeMinistry = typeof result?.selectedMinistry === "string" ? result.selectedMinistry : "";
+      const safeAuthority = typeof result?.selectedAuthority === "string" ? result.selectedAuthority : "";
+      const safeDraft = typeof result?.draftedText === "string" 
+        ? result.draftedText.slice(0, 3000) 
+        : "Error drafting RTI application text. Please try again.";
+
+      setSelectedMinistry(safeMinistry);
+      setSelectedAuthority(safeAuthority);
+      setDraftedText(safeDraft);
     } catch (err) {
       console.error(err);
-      alert("Error processing request. Check console/API key.");
+      setError("Error processing request. Check console/API key.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Fix: QA 5 (Async/await clipboard handling with error fallback)
+  const handleCopy = async () => {
+    if (!draftedText) return;
+    try {
+      await navigator.clipboard.writeText(draftedText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      alert("Could not auto-copy. Please select and copy the text manually.", err);
     }
   };
 
@@ -36,23 +63,41 @@ export default function RTIForm() {
         File RTI Application
       </h2>
 
-      <form onSubmit={handleAutoFill} className="space-y-4">
+      <form onSubmit={handleAutoFill} className="space-y-4 print:hidden">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          {/* Fix: QA 6 (htmlFor added) */}
+          <label 
+            htmlFor="rti-problem-input" 
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Describe Your Problem (Hindi / Hinglish / English)
           </label>
+          {/* Fix: QA 6 (id added) */}
           <textarea
+            id="rti-problem-input"
             rows="3"
             className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 border-gray-300"
             placeholder="e.g. Mere ghar ke paas ki sadak 6 mahine se tooti hai, koi action nahi le raha..."
             value={problem}
             onChange={(e) => setProblem(e.target.value)}
           />
+          {/* Fix: QA 3 (Privacy disclaimer) */}
+          <p className="text-xs text-gray-500 mt-1">
+            🔒 Privacy Note: Do not include sensitive personal IDs, passwords, or financial credentials.
+          </p>
         </div>
+
+        {/* Fix: QA 6 (Visible Error message) */}
+        {error && (
+          <div role="alert" className="p-2.5 text-xs text-red-600 bg-red-50 border border-red-200 rounded-md">
+            {error}
+          </div>
+        )}
+
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-2.5 rounded-md font-semibold hover:bg-blue-700 transition disabled:opacity-50"
+          className="w-full bg-blue-600 text-white py-2.5 rounded-md font-semibold hover:bg-blue-700 transition disabled:opacity-50 cursor-pointer"
         >
           {loading
             ? "AI Auto-Selecting Ministry & Drafting..."
@@ -62,12 +107,14 @@ export default function RTIForm() {
 
       {(selectedMinistry || draftedText) && (
         <div className="mt-8 pt-6 border-t border-gray-200 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:hidden">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              {/* Fix: QA 6 (htmlFor & id added) */}
+              <label htmlFor="ministry-input" className="block text-sm font-medium text-gray-700 mb-1">
                 Selected Ministry
               </label>
               <input
+                id="ministry-input"
                 type="text"
                 value={selectedMinistry}
                 onChange={(e) => setSelectedMinistry(e.target.value)}
@@ -75,10 +122,12 @@ export default function RTIForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              {/* Fix: QA 6 (htmlFor & id added) */}
+              <label htmlFor="authority-input" className="block text-sm font-medium text-gray-700 mb-1">
                 Public Authority
               </label>
               <input
+                id="authority-input"
                 type="text"
                 value={selectedAuthority}
                 onChange={(e) => setSelectedAuthority(e.target.value)}
@@ -88,12 +137,14 @@ export default function RTIForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1 print:hidden">
+            {/* Fix: QA 6 (htmlFor & id added) */}
+            <label htmlFor="draft-textarea" className="block text-sm font-medium text-gray-700 mb-1 print:hidden">
               <span>Generated Legal RTI Text </span>
               <span>{draftedText.length}/3000 Chars</span>
             </label>
 
             <textarea
+              id="draft-textarea"
               rows="12"
               value={draftedText}
               maxLength={3000}
@@ -101,24 +152,30 @@ export default function RTIForm() {
               className="w-full p-3 bg-white border border-gray-300 rounded-md font-mono text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 print:hidden"
             />
 
+            {/* Print Only Heading + Text */}
             <div className="hidden print:block whitespace-pre-wrap font-mono text-sm text-gray-900 leading-relaxed p-1">
+              <div className="mb-4">
+                <strong>Ministry:</strong> {selectedMinistry || "N/A"}<br />
+                <strong>Public Authority:</strong> {selectedAuthority || "N/A"}
+              </div>
               {draftedText}
             </div>
           </div>
-          {/* Buttons: Copy & PDF */}
+
+          {/* Fix: QA 4 (State RTI Notice Badge) */}
+          <div className="p-3 bg-amber-50 border border-amber-200 rounded-md text-xs text-amber-800 print:hidden">
+            ℹ️ <strong>Submission Guidance:</strong> Direct portal link defaults to Central RTI Portal (rtionline.gov.in). For state/local public authorities (e.g., State Police, Municipalities), copy this draft and submit via your respective State RTI Portal.
+          </div>
 
           {/* Buttons Container: Equal Size & Uniform Height */}
-          <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row items-center gap-3 pt-2 print:hidden">
             {/* 1. Copy Button */}
             <button
               type="button"
-              onClick={() => {
-                navigator.clipboard.writeText(draftedText);
-                alert("RTI Draft Copied!");
-              }}
+              onClick={handleCopy}
               className="flex-1 w-full py-2.5 px-4 text-xs font-semibold bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>📋 Copy Text</span>
+              <span>{copied ? "✓ Copied!" : "📋 Copy Text"}</span>
             </button>
 
             {/* 2. PDF / Print Draft Button */}
