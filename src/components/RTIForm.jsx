@@ -12,44 +12,8 @@ export default function RTIForm() {
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
 
-  // const handleAutoFill = async (e) => {
-  //   e.preventDefault();
-  //   if (!problem.trim()) {
-  //     setError("Please describe your problem or query first.");
-  //     return;
-  //   }
-  //   setError("");
-  //   setSelectedMinistry("");
-  // setSelectedAuthority("");
-  // setDraftedText("");
-  //   setLoading(true);
-
-  //   try {
-  //     const result = await draftRTIRequest({
-  //       userProblem: problem,
-  //       departmentsList: mockDepartments,
-  //     });
-
-  //     // Fix: QA 2 (Safe parsing checks)
-  //     const safeMinistry = typeof result?.selectedMinistry === "string" ? result.selectedMinistry : "";
-  //     const safeAuthority = typeof result?.selectedAuthority === "string" ? result.selectedAuthority : "";
-  //     const safeDraft = typeof result?.draftedText === "string" 
-  //       ? result.draftedText.slice(0, 3000) 
-  //       : "Error drafting RTI application text. Please try again.";
-
-  //     setSelectedMinistry(safeMinistry);
-  //     setSelectedAuthority(safeAuthority);
-  //     setDraftedText(safeDraft);
-  //   } catch (err) {
-  //     console.error(err);
-  //     setError("Error processing request. Check console/API key.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleAutoFill = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!problem.trim()) {
       setError("Please describe your problem or query first.");
       return;
@@ -67,21 +31,34 @@ export default function RTIForm() {
       });
 
       // Fix: QA 9 (Validate full schema - do not put error strings inside draftedText)
-      if (!result || typeof result.draftedText !== "string" || !result.draftedText.trim()) {
-        throw new Error("Unable to generate a valid RTI draft. Please try again.");
+      if (
+        !result ||
+        typeof result.draftedText !== "string" ||
+        !result.draftedText.trim()
+      ) {
+        throw new Error(
+          "Unable to generate a valid RTI draft. Please try again.",
+        );
       }
 
-      const safeMinistry = typeof result?.selectedMinistry === "string" ? result.selectedMinistry : "";
-      const safeAuthority = typeof result?.selectedAuthority === "string" ? result.selectedAuthority : "";
-      const safeDraft = result.draftedText.slice(0, 3000);
+      const safeMinistry =
+        typeof result?.selectedMinistry === "string"
+          ? result.selectedMinistry
+          : "";
+      const safeAuthority =
+        typeof result?.selectedAuthority === "string"
+          ? result.selectedAuthority
+          : "";
 
       setSelectedMinistry(safeMinistry);
       setSelectedAuthority(safeAuthority);
-      setDraftedText(safeDraft);
+      setDraftedText(result.draftedText.slice(0, 3000));
     } catch (err) {
       console.error(err);
       // Fix: QA 10 (User-friendly error message instead of developer guidance)
-      setError("Failed to generate RTI draft. Please try again or check your network.");
+      setError(
+        "Failed to generate RTI draft. Please try again or check your network.",
+      );
     } finally {
       setLoading(false);
     }
@@ -94,7 +71,10 @@ export default function RTIForm() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      alert("Could not auto-copy. Please select and copy the text manually.", err);
+      alert(
+        "Could not auto-copy. Please select and copy the text manually.",
+        err,
+      );
     }
   };
 
@@ -107,8 +87,8 @@ export default function RTIForm() {
       <form onSubmit={handleAutoFill} className="space-y-4 print:hidden">
         <div>
           {/* Fix: QA 6 (htmlFor added) */}
-          <label 
-            htmlFor="rti-problem-input" 
+          <label
+            htmlFor="rti-problem-input"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
             Describe Your Problem (Hindi / Hinglish / English)
@@ -118,19 +98,27 @@ export default function RTIForm() {
             id="rti-problem-input"
             rows="3"
             className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 border-gray-300"
-            placeholder="e.g. Mere ghar ke paas ki sadak 6 mahine se tooti hai, koi action nahi le raha..."
+            placeholder="e.g. Mere ghar ke paas ki sadak 6 mahine se tooti hai, koi action nahi le raha (Max 1000 characters)..."
             value={problem}
+            maxLength={1000}
             onChange={(e) => setProblem(e.target.value)}
           />
+          <div className="text-xs text-gray-500 text-right">
+            {problem.length}/1000 characters
+          </div>
           {/* Fix: QA 3 (Privacy disclaimer) */}
           <p className="text-xs text-gray-500 mt-1">
-            🔒 Privacy Note: Do not include sensitive personal IDs, passwords, or financial credentials.
+            🔒 Privacy Note: Do not include sensitive personal IDs, passwords,
+            or financial credentials.
           </p>
         </div>
 
         {/* Fix: QA 6 (Visible Error message) */}
         {error && (
-          <div role="alert" className="p-2.5 text-xs text-red-600 bg-red-50 border border-red-200 rounded-md">
+          <div
+            role="alert"
+            className="p-2.5 text-xs text-red-600 bg-red-50 border border-red-200 rounded-md"
+          >
             {error}
           </div>
         )}
@@ -145,13 +133,34 @@ export default function RTIForm() {
             : "Auto-Fill Ministry & Generate Draft"}
         </button>
       </form>
-
-      {(selectedMinistry || draftedText) && (
+      {/* Fix: QA 11 (Render output strictly when valid draftedText exists) */}
+      {draftedText && draftedText.trim().length > 0 && (
         <div className="mt-8 pt-6 border-t border-gray-200 space-y-4">
+          {/* Fix: QA 11 (Unresolved Authority Handling with One-Click Auto-Resolve) */}
+          {(!selectedAuthority ||
+            selectedAuthority.trim().toUpperCase() === "N/A") && (
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-md text-xs text-amber-900 flex items-center justify-between print:hidden">
+              <span>
+                ⚠️ <strong>Authority Unresolved:</strong> Public Authority field
+                contains "N/A".
+              </span>
+              <button
+                type="button"
+                onClick={handleAutoFill}
+                className="ml-2 px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded transition"
+              >
+                🔄 Auto-Resolve Authority
+              </button>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:hidden">
             <div>
               {/* Fix: QA 6 (htmlFor & id added) */}
-              <label htmlFor="ministry-input" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="ministry-input"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Selected Ministry
               </label>
               <input
@@ -164,7 +173,10 @@ export default function RTIForm() {
             </div>
             <div>
               {/* Fix: QA 6 (htmlFor & id added) */}
-              <label htmlFor="authority-input" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="authority-input"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Public Authority
               </label>
               <input
@@ -179,8 +191,11 @@ export default function RTIForm() {
 
           <div>
             {/* Fix: QA 6 (htmlFor & id added) */}
-            <label htmlFor="draft-textarea" className="block text-sm font-medium text-gray-700 mb-1 print:hidden">
-              <span>Generated Legal RTI Text </span>
+            <label
+              htmlFor="draft-textarea"
+              className="block text-sm font-medium text-gray-700 mb-1 print:hidden flex justify-between"
+            >
+              <span>Generated Legal RTI Text</span>
               <span>{draftedText.length}/3000 Chars</span>
             </label>
 
@@ -196,16 +211,31 @@ export default function RTIForm() {
             {/* Print Only Heading + Text */}
             <div className="hidden print:block whitespace-pre-wrap font-mono text-sm text-gray-900 leading-relaxed p-1">
               <div className="mb-4">
-                <strong>Ministry:</strong> {selectedMinistry || "N/A"}<br />
+                <strong>Ministry:</strong> {selectedMinistry || "N/A"}
+                <br />
                 <strong>Public Authority:</strong> {selectedAuthority || "N/A"}
               </div>
               {draftedText}
             </div>
           </div>
 
-          {/* Fix: QA 4 (State RTI Notice Badge) */}
-          <div className="p-3 bg-amber-50 border border-amber-200 rounded-md text-xs text-amber-800 print:hidden">
-            ℹ️ <strong>Submission Guidance:</strong> Direct portal link defaults to Central RTI Portal (rtionline.gov.in). For state/local public authorities (e.g., State Police, Municipalities), copy this draft and submit via your respective State RTI Portal.
+          {/* Fix: QA 4 & 5 (State RTI Notice Badge + Disclaimer) */}
+          <div className="p-3 bg-amber-50 border border-amber-200 rounded-md text-xs text-amber-800 print:hidden space-y-1">            
+            {/* State/Central Submission Guidance Banner */}
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 flex items-start gap-2 print:hidden shadow-sm">
+              <span className="text-base leading-none">📌</span>
+              <div>
+                <strong className="font-semibold text-amber-950">
+                  Important:
+                </strong>
+                Central authorities ke liye
+                <code className="bg-amber-100/80 px-1 py-0.5 rounded text-amber-950 font-mono">
+                  rtionline.gov.in
+                </code>
+                use karein. State/Local issues (jaise State Police, Nagar Nigam)
+                ke liye respective State Portal par submit karein.
+              </div>
+            </div>
           </div>
 
           {/* Buttons Container: Equal Size & Uniform Height */}
