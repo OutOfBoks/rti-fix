@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
-export const draftRTIRequest = async ({ userProblem, departmentsList }) => {  
+export const draftRTIRequest = async ({ userProblem, departmentsList }) => {
   const systemInstruction = `
 You are an expert Indian RTI Application Writer. Analyze the user's issue and return ONLY a valid JSON object with strictly these 3 keys:
 1. "selectedMinistry"

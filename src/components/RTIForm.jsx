@@ -31,24 +31,12 @@ export default function RTIForm() {
       });
 
       // Fix: QA 9 (Validate full schema - do not put error strings inside draftedText)
-      if (
-        !result ||
-        typeof result.draftedText !== "string" ||
-        !result.draftedText.trim()
-      ) {
-        throw new Error(
-          "Unable to generate a valid RTI draft. Please try again.",
-        );
+      if (!result ||typeof result.draftedText !== "string" ||!result.draftedText.trim()) {
+        throw new Error("Unable to generate a valid RTI draft. Please try again.",);
       }
 
-      const safeMinistry =
-        typeof result?.selectedMinistry === "string"
-          ? result.selectedMinistry
-          : "";
-      const safeAuthority =
-        typeof result?.selectedAuthority === "string"
-          ? result.selectedAuthority
-          : "";
+      const safeMinistry = typeof result?.selectedMinistry === "string" ? result.selectedMinistry : "";
+      const safeAuthority = typeof result?.selectedAuthority === "string" ? result.selectedAuthority : "";
 
       setSelectedMinistry(safeMinistry);
       setSelectedAuthority(safeAuthority);
@@ -56,9 +44,7 @@ export default function RTIForm() {
     } catch (err) {
       console.error(err);
       // Fix: QA 10 (User-friendly error message instead of developer guidance)
-      setError(
-        "Failed to generate RTI draft. Please try again or check your network.",
-      );
+      setError("Failed to generate RTI draft. Please try again or check your network.",);
     } finally {
       setLoading(false);
     }
@@ -71,32 +57,23 @@ export default function RTIForm() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      alert(
-        "Could not auto-copy. Please select and copy the text manually.",
-        err,
-      );
+      alert("Could not auto-copy. Please select and copy the text manually.",err);
     }
   };
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">
-        File RTI Application
-      </h2>
+      <h2 className="text-2xl font-bold mb-4 text-gray-800"> File RTI Application</h2>
 
       <form onSubmit={handleAutoFill} className="space-y-4 print:hidden">
-        <div>
-          {/* Fix: QA 6 (htmlFor added) */}
+        <div> {/* Fix: QA 6 (htmlFor added) */}
           <label
             htmlFor="rti-problem-input"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
+            className="block text-sm font-medium text-gray-700 mb-1">
             Describe Your Problem (Hindi / Hinglish / English)
           </label>
           {/* Fix: QA 6 (id added) */}
-          <textarea
-            id="rti-problem-input"
-            rows="3"
+          <textarea id="rti-problem-input" rows="3"
             className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 border-gray-300"
             placeholder="e.g. Mere ghar ke paas ki sadak 6 mahine se tooti hai, koi action nahi le raha (Max 1000 characters)..."
             value={problem}
@@ -108,64 +85,50 @@ export default function RTIForm() {
           </div>
           {/* Fix: QA 3 (Privacy disclaimer) */}
           <p className="text-xs text-gray-500 mt-1">
-            🔒 Privacy Note: Do not include sensitive personal IDs, passwords,
-            or financial credentials.
+            🔒 Privacy Note: Do not include sensitive personal IDs, passwords,or financial credentials.
           </p>
         </div>
 
         {/* Fix: QA 6 (Visible Error message) */}
         {error && (
-          <div
-            role="alert"
-            className="p-2.5 text-xs text-red-600 bg-red-50 border border-red-200 rounded-md"
-          >
+          <div role="alert"
+            className="p-2.5 text-xs text-red-600 bg-red-50 border border-red-200 rounded-md">
             {error}
           </div>
         )}
 
-        <button
-          type="submit"
+        <button  type="submit"
           disabled={loading}
           className="w-full bg-blue-600 text-white py-2.5 rounded-md font-semibold hover:bg-blue-700 transition disabled:opacity-50 cursor-pointer"
         >
           {loading
-            ? "AI Auto-Selecting Ministry & Drafting..."
-            : "Auto-Fill Ministry & Generate Draft"}
+            ? "AI Auto-Selecting Ministry & Drafting..." : "Auto-Fill Ministry & Generate Draft"}
         </button>
       </form>
       {/* Fix: QA 11 (Render output strictly when valid draftedText exists) */}
       {draftedText && draftedText.trim().length > 0 && (
         <div className="mt-8 pt-6 border-t border-gray-200 space-y-4">
           {/* Fix: QA 11 (Unresolved Authority Handling with One-Click Auto-Resolve) */}
-          {(!selectedAuthority ||
-            selectedAuthority.trim().toUpperCase() === "N/A") && (
+          {(!selectedAuthority || selectedAuthority.trim().toUpperCase() === "N/A") && (
             <div className="p-3 bg-amber-50 border border-amber-200 rounded-md text-xs text-amber-900 flex items-center justify-between print:hidden">
               <span>
-                ⚠️ <strong>Authority Unresolved:</strong> Public Authority field
-                contains "N/A".
+                ⚠️ <strong>Authority Unresolved:</strong> Public Authority field contains "N/A".
               </span>
-              <button
-                type="button"
+              <button  type="button"
                 onClick={handleAutoFill}
-                className="ml-2 px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded transition"
-              >
+                className="ml-2 px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded transition">
                 🔄 Auto-Resolve Authority
               </button>
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:hidden">
-            <div>
-              {/* Fix: QA 6 (htmlFor & id added) */}
-              <label
-                htmlFor="ministry-input"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+            <div>  {/* Fix: QA 6 (htmlFor & id added) */}
+              <label htmlFor="ministry-input"
+                className="block text-sm font-medium text-gray-700 mb-1">
                 Selected Ministry
               </label>
-              <input
-                id="ministry-input"
-                type="text"
+              <input  id="ministry-input" type="text"
                 value={selectedMinistry}
                 onChange={(e) => setSelectedMinistry(e.target.value)}
                 className="w-full p-2.5 bg-white border border-gray-300 rounded-md font-medium text-gray-800 focus:ring-2 focus:ring-blue-500"
@@ -173,15 +136,11 @@ export default function RTIForm() {
             </div>
             <div>
               {/* Fix: QA 6 (htmlFor & id added) */}
-              <label
-                htmlFor="authority-input"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label  htmlFor="authority-input"
+                className="block text-sm font-medium text-gray-700 mb-1">
                 Public Authority
               </label>
-              <input
-                id="authority-input"
-                type="text"
+              <input  id="authority-input"  type="text"
                 value={selectedAuthority}
                 onChange={(e) => setSelectedAuthority(e.target.value)}
                 className="w-full p-2.5 bg-white border border-gray-300 rounded-md font-medium text-gray-800 focus:ring-2 focus:ring-blue-500"
@@ -189,19 +148,13 @@ export default function RTIForm() {
             </div>
           </div>
 
-          <div>
-            {/* Fix: QA 6 (htmlFor & id added) */}
-            <label
-              htmlFor="draft-textarea"
-              className="block text-sm font-medium text-gray-700 mb-1 print:hidden flex justify-between"
-            >
+          <div> {/* Fix: QA 6 (htmlFor & id added) */}
+            <label  htmlFor="draft-textarea"
+              className="block text-sm font-medium text-gray-700 mb-1 print:hidden flex justify-between">
               <span>Generated Legal RTI Text</span>
               <span>{draftedText.length}/3000 Chars</span>
             </label>
-
-            <textarea
-              id="draft-textarea"
-              rows="12"
+            <textarea  id="draft-textarea"  rows="12"
               value={draftedText}
               maxLength={3000}
               onChange={(e) => setDraftedText(e.target.value)}
@@ -238,20 +191,14 @@ export default function RTIForm() {
           {/* Buttons Container: Equal Size & Uniform Height */}
           <div className="flex flex-col sm:flex-row items-center gap-3 pt-2 print:hidden">
             {/* 1. Copy Button */}
-            <button
-              type="button"
-              onClick={handleCopy}
-              className="flex-1 w-full py-2.5 px-4 text-xs font-semibold bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition flex items-center justify-center gap-2 cursor-pointer"
-            >
+            <button  type="button"  onClick={handleCopy}
+              className="flex-1 w-full py-2.5 px-4 text-xs font-semibold bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition flex items-center justify-center gap-2 cursor-pointer">
               <span>{copied ? "✓ Copied!" : "📋 Copy Text"}</span>
             </button>
 
             {/* 2. PDF / Print Draft Button */}
-            <button
-              type="button"
-              onClick={() => window.print()}
-              className="flex-1 w-full py-2.5 px-4 text-xs font-semibold text-gray-800 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
-            >
+            <button  type="button"  onClick={() => window.print()}
+              className="flex-1 w-full py-2.5 px-4 text-xs font-semibold text-gray-800 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-lg flex items-center justify-center gap-2 transition-all cursor-pointer">
               <svg
                 className="w-4 h-4 text-gray-600"
                 fill="none"
@@ -269,10 +216,7 @@ export default function RTIForm() {
             </button>
 
             {/* 3. Direct RTI Online Portal Button */}
-            <a
-              href="https://rtionline.gov.in"
-              target="_blank"
-              rel="noreferrer"
+            <a  href="https://rtionline.gov.in"  target="_blank"  rel="noreferrer"
               className="flex-1 w-full py-2.5 px-4 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center gap-2 transition-all text-center"
             >
               <span>Open RTI Portal</span>
