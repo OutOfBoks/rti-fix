@@ -7,6 +7,13 @@ An AI-powered tool that automatically drafts legally precise RTI (Right to Infor
 - **Print & PDF Support**: Generates clean, print-ready legal document drafts.
 - **Multilingual Support**: Accepts Hindi, English, and Hinglish inputs.
 - **Instant Portal Guidance**: Formats text for direct copy-pasting to official RTI filing portals.
+- **State vs. Central Guidance**: Clear submission guidance for Central (`rtionline.gov.in`) and State/Local public authorities.
+
+## 🛡️ Security, Reliability & Quality Guardrails
+- **Structured JSON Engine**: Powered by Gemini API with structured JSON output for precise Ministry and Public Authority mapping.
+- **Prompt Injection Protection**: Input boundary isolation (`<USER_PROBLEM>`) to prevent jailbreaks or instruction manipulation.
+- **Portal Compliance Enforced**: Strict character set filtering and length limits (max 3,000 characters) matching official government filing portals.
+- **Non-Blocking Fault Tolerance**: Safe error handling and non-blocking inline feedback for seamless user experience.
 
 ## Tech Stack & Development
 - **Frontend**: React (Vite), Tailwind CSS

@@ -219,9 +219,7 @@ export default function RTIForm() {
             </div>
           </div>
 
-          {/* Fix: QA 4 & 5 (State RTI Notice Badge + Disclaimer) */}
-          <div className="p-3 bg-amber-50 border border-amber-200 rounded-md text-xs text-amber-800 print:hidden space-y-1">            
-            {/* State/Central Submission Guidance Banner */}
+          {/* Fix: QA 4 & 5 (State RTI Notice Badge + Disclaimer) */} {/* State/Central Submission Guidance Banner */}
             <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 flex items-start gap-2 print:hidden shadow-sm">
               <span className="text-base leading-none">📌</span>
               <div>
@@ -235,8 +233,7 @@ export default function RTIForm() {
                 use karein. State/Local issues (jaise State Police, Nagar Nigam)
                 ke liye respective State Portal par submit karein.
               </div>
-            </div>
-          </div>
+            </div>          
 
           {/* Buttons Container: Equal Size & Uniform Height */}
           <div className="flex flex-col sm:flex-row items-center gap-3 pt-2 print:hidden">
