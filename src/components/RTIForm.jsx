@@ -60,7 +60,12 @@ export default function RTIForm() {
       alert("Could not auto-copy. Please select and copy the text manually.",err);
     }
   };
-
+  const handlePrint = () => {
+    const originalTitle = document.title;
+    document.title = "RTI-Draft"; 
+    window.print();
+    document.title = originalTitle;
+  };
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
       <h2 className="text-2xl font-bold mb-4 text-gray-800"> File RTI Application</h2>
@@ -123,7 +128,7 @@ export default function RTIForm() {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:hidden">
-            <div>  {/* Fix: QA 6 (htmlFor & id added) */}
+            <div>  {/* Fix: QA 6 (htmlFor & id ) */}
               <label htmlFor="ministry-input"
                 className="block text-sm font-medium text-gray-700 mb-1">
                 Selected Ministry
@@ -148,7 +153,7 @@ export default function RTIForm() {
             </div>
           </div>
 
-          <div> {/* Fix: QA 6 (htmlFor & id added) */}
+          <div> {/* Fix: QA 6 (htmlFor & id ) */}
             <label  htmlFor="draft-textarea"
               className="block text-sm font-medium text-gray-700 mb-1 print:hidden flex justify-between">
               <span>Generated Legal RTI Text</span>
@@ -196,8 +201,9 @@ export default function RTIForm() {
               <span>{copied ? "✓ Copied!" : "📋 Copy Text"}</span>
             </button>
 
-            {/* 2. PDF / Print Draft Button */}
-            <button  type="button"  onClick={() => window.print()}
+            {/* 2. PDF / Print Draft Button onClick={() => window.print()} */}
+            <button  type="button"  
+              onClick={handlePrint}
               className="flex-1 w-full py-2.5 px-4 text-xs font-semibold text-gray-800 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-lg flex items-center justify-center gap-2 transition-all cursor-pointer">
               <svg
                 className="w-4 h-4 text-gray-600"
